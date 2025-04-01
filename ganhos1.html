@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprar Planos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #000;
+            color: #fff;
+        }
+        .investment-card, .investment-active {
+            background-color: #111;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 90%;
+            max-width: 400px;
+        }
+        .investment-card img, .investment-active img {
+            width: 100px;
+            height: 100px;
+            border-radius: 5px;
+        }
+        .investment-info {
+            flex-grow: 1;
+            margin-left: 10px;
+        }
+        .buy-button, .view-investments-button, .resgatar-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            font-weight: bold;
+            border-radius: 3px;
+        }
+        .investment-list {
+            margin-top: 20px;
+        }
+        #investimentos, #meus-investimentos {
+            display: none;
+        }
+        .em-trabalho {
+            color: orange;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Comprar Planos de Investimento</h1>
+    <h2>Saldo da Conta: R$ <span id="saldo-conta">21.00</span></h2>
+    <h2>Saldo da Carteira: R$ <span id="saldo-carteira">1.00</span></h2>
+
+    <!-- Botões para navegação -->
+    <button class="view-investments-button" onclick="mostrarInvestimentos()">Meus Investimentos</button>
+    <button class="view-investments-button" onclick="mostrarInvestimentosDisponiveis()">Comprar Planos</button>
+
+    <!-- Container para planos disponíveis para compra -->
+    <div id="investimentos"></div>
+
+    <!-- Container para investimentos feitos -->
+    <div id="meus-investimentos" class="investment-list"></div>
+
+    <script>
+        const planos = [
+            { nome: "Plano Grátis", preco: 20, rendimento: 5, duracao: 1, imagem: "1001.png", medalha: "🏅" },
+            { nome: "H INVESTE 1", preco: 60, rendimento: 15, duracao: 90, imagem: "1001.png", medalha: "🏆" },
+            { nome: "H INVESTE 2", preco: 160, rendimento: 33, duracao: 90, imagem: "1001.png", medalha: "🏆" },
+            { nome: "Plano Básico", preco: 300, rendimento: 50, duracao: 90, imagem: "1001.png", medalha: "🏆" },
+            { nome: "Plano Premium", preco: 450, rendimento: 70, duracao: 90, imagem: "1001.png", medalha: "🎖️" },
+            { nome: "Plano Avançado", preco: 600, rendimento: 90, duracao: 90, imagem: "1001.png", medalha: "🏅" },
+            { nome: "Plano Elite", preco: 800, rendimento: 120, duracao: 90, imagem: "1001.png", medalha: "🥉" },
+            { nome: "Plano Master", preco: 1000, rendimento: 150, duracao: 90, imagem: "1001.png", medalha: "🎖️" },
+            { nome: "Plano Supremo", preco: 1250, rendimento: 180, duracao: 90, imagem: "1001.png", medalha: "🥇" },
+            { nome: "Plano Diamante", preco: 1550, rendimento: 220, duracao: 90, imagem: "1001.png", medalha: "🥈" }
+        ];
+
+        // Saldo inicial da conta
+        let saldoConta = parseFloat(localStorage.getItem("saldoConta")) || 21.00;
+        let saldoCarteira = parseFloat(localStorage.getItem("saldoCarteira")) || 1.00;
+        let saldoRendaAcumulada = parseFloat(localStorage.getItem("rendaAcumulada")) || 0;
+        let saqueLiberado = localStorage.getItem("saqueLiberado") === "true"; // Se o saque está liberado
+
+        function atualizarSaldo() {
+            document.getElementById("saldo-conta").textContent = saldoConta.toFixed(2);
+            document.getElementById("saldo-carteira").textContent = saldoCarteira.toFixed(2);
+        }
+
+        function comprar(index) {
+            const plano = planos[index];
+            if (saldoConta >= plano.preco) {
+                saldoConta -= plano.preco; // Desconta o saldo da conta
+                localStorage.setItem("saldoConta", saldoConta.toFixed(2)); // Armazena o novo saldo da conta
+
+                let investimentos = JSON.parse(localStorage.getItem("investimentos")) || [];
+                plano.rendimentoAcumulado = 0;
+                plano.dataCompra = Date.now();
+                investimentos.push(plano);
+                localStorage.setItem("investimentos", JSON.stringify(investimentos));
+
+                // Atualiza o saldo da carteira após a compra
+                saldoCarteira += plano.preco;  // Adiciona o valor comprado à carteira
+                localStorage.setItem("saldoCarteira", saldoCarteira.toFixed(2)); // Armazena o novo saldo da carteira
+
+                // Se o plano for superior a R$ 60, libera o saque
+                if (plano.preco >= 60) {
+                    saqueLiberado = true;
+                    localStorage.setItem("saqueLiberado", "true");
+                }
+
+                alert("Compra realizada com sucesso!");
+                atualizarSaldo();
+            } else {
+                alert("Saldo insuficiente na conta!");
+            }
+        }
+
+        function mostrarInvestimentos() {
+            // Esconde os planos e exibe os investimentos realizados
+            document.getElementById("investimentos").style.display = "none";
+            document.getElementById("meus-investimentos").style.display = "block";
+            
+            let investimentos = JSON.parse(localStorage.getItem("investimentos")) || [];
+            const container = document.getElementById("meus-investimentos");
+            container.innerHTML = '';
+
+            if (investimentos.length === 0) {
+                container.innerHTML = '<h2>Nenhum investimento realizado!</h2>';
+            } else {
+                investimentos.forEach((investimento) => {
+                    const div = document.createElement("div");
+                    div.classList.add("investment-active");
+                    let tempoRestante = Date.now() - investimento.dataCompra;
+                    let resgatarDisponivel = tempoRestante >= 24 * 60 * 60 * 1000; // 24 horas
+
+                    div.innerHTML = `
+                        <img src="${investimento.imagem}" alt="${investimento.nome}">
+                        <div class="investment-info">
+                            <h2>${investimento.nome} ${investimento.medalha}</h2>
+                            <p>Investimento: R$ ${investimento.preco.toFixed(2)}</p>
+                            <p>Lucro Diário: R$ ${investimento.rendimento.toFixed(2)}</p>
+                            <p>Rendimento Acumulado: R$ ${investimento.rendimentoAcumulado.toFixed(2)}</p>
+                            <p class="${resgatarDisponivel ? '' : 'em-trabalho'}">
+                                ${resgatarDisponivel ? 'Liberado para Resgate' : 'Em Trabalho'}
+                            </p>
+                            <button class="resgatar-button" onclick="resgatar(${investimento.preco}, ${investimento.rendimento})" ${resgatarDisponivel ? '' : 'disabled'}>
+                                Resgatar
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+        }
+
+        function resgatar(valorInvestido, rendimento) {
+            // Se 24 horas se passaram, liberar o resgate
+            saldoRendaAcumulada += valorInvestido + rendimento; // O saldo será o valor investido mais o rendimento
+            localStorage.setItem("rendaAcumulada", saldoRendaAcumulada.toFixed(2));
+
+            // Atualiza a "Renda Acumulada"
+            let investimentos = JSON.parse(localStorage.getItem("investimentos")) || [];
+            investimentos.forEach((investimento) => {
+                if (investimento.preco === valorInvestido) {
+                    investimento.rendimentoAcumulado += rendimento; // Acumula rendimento
+                    investimento.dataCompra = Date.now(); // Reinicia o ciclo de 24 horas
+                }
+            });
+
+            localStorage.setItem("investimentos", JSON.stringify(investimentos));
+            alert("Resgate realizado com sucesso!");
+            atualizarSaldo();
+            mostrarInvestimentos(); // Atualiza a lista de investimentos
+        }
+
+        function mostrarInvestimentosDisponiveis() {
+            // Esconde os investimentos realizados e exibe os planos para compra
+            document.getElementById("meus-investimentos").style.display = "none";
+            document.getElementById("investimentos").style.display = "block";
+            
+            const container = document.getElementById("investimentos");
+            container.innerHTML = '';
+
+            planos.forEach((plano, index) => {
+                const div = document.createElement("div");
+                div.classList.add("investment-card");
+                div.innerHTML = `
+                    <img src="${plano.imagem}" alt="${plano.nome}">
+                    <div class="investment-info">
+                        <h2>${plano.nome} ${plano.medalha}</h2>
+                        <p>Preço: R$ ${plano.preco.toFixed(2)}</p>
+                        <p>Rendimento: R$ ${plano.rendimento.toFixed(2)} por dia</p>
+                        <p>Duração: ${plano.duracao} dias</p>
+                        <button class="buy-button" onclick="comprar(${index})">Comprar</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Atualiza o saldo ao carregar a página
+        atualizarSaldo();
+    </script>
+
+</body>
+</html>

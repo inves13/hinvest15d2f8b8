@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H Invest</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="logo">
+    <img src="1006.png" style="width: 100%; max-width: 400px; height: auto;">
+</div>
+
+<!-- Exibição do Nome e Telefone do Usuário -->
+<section class="usuario-info">
+    <p id="usuario-nome">Nome do Usuário: Não cadastrado</p>
+    <p id="usuario-telefone">Telefone: Não cadastrado</p>
+</section>
+
+<!-- Menu de ações -->
+<section class="acoes">
+    <a href="recarga.html" class="botao"><img src="10003.png" alt=""> Recarga</a>
+    <a href="saque.html" class="botao"><img src="10004.png" alt=""> Retirada</a>
+    <button class="botao" id="checkin-diario"><img src="10005.png" alt=""> Check-in Diário</button>
+    <a href="download.html" class="botao"><img src="10011.png" alt=""> Baixar App</a>
+    <a href="ajuda.html" class="botao"><img src="10011.png" alt=""> Ajuda</a>
+</section>
+
+<!-- Notificação -->
+<div class="notificacao">
+    <span class="icone-sino">🔔</span>
+    <marquee behavior="scroll" direction="left">
+        Recarga R$160 com sucesso telefone (75)998**2201  Saque R$300 chave 🔑 Juao***@gmail.com andamento da 08.00 até às  21.00 horas nova investimentos de R$600.00 
+    </marquee>
+</div>
+
+<!-- Carteira -->
+<section class="carteira">
+    <h2>Minha carteira</h2>
+    <div class="saldos">
+        <div class="saldo">
+            <img src="10004.png" alt="">
+            <p id="saldo-conta">R$ 100.00</p>
+            <span>Saldo da conta</span>
+        </div>
+        <div class="saldo">
+            <img src="10004.png" alt="">
+            <p id="renda-acumulada">R$ 0.00</p>
+            <span>Renda acumulada</span>
+        </div>
+        <div class="saldo">
+            <img src="10004.png" alt="">
+            <p id="valor-recebimento">R$ 0.00</p>
+            <span>Valor de recebimento</span>
+        </div>
+    </div>
+</section>
+
+<!-- Menu inferior -->
+<nav class="menu-inferior">
+    <a href="index.html" class="ativo"><img src="30001.png" alt=""> Início</a>
+    <a href="ganhos1.html" class="botao-link" data-url="ganhos1.html"><img src="10016.png" alt=""> Ganhos 1</a>
+    <a href="ganhos2.html" class="botao-link" data-url="ganhos2.html"><img src="10017.png" alt=""> Ganhos 2</a>
+    <a href="perfil.html" class="botao-link" data-url="perfil.html"><img src="ft4_1.png" alt=""> Meu</a>
+</nav>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let saldoConta = document.getElementById("saldo-conta");
+        let rendaAcumulada = document.getElementById("renda-acumulada");
+        let valorRecebimento = document.getElementById("valor-recebimento");
+        let checkinDiario = document.getElementById("checkin-diario");
+
+        // Recupera os valores do localStorage
+        let saldoSalvo = localStorage.getItem("saldoConta") || "20";
+        let rendaSalva = localStorage.getItem("rendaAcumulada") || "0";
+        let recebimentoSalvo = localStorage.getItem("valorRecebimento") || "0";
+
+        // Atualiza os valores na tela
+        saldoConta.innerText = "R$ " + parseFloat(saldoSalvo).toFixed(2);
+        rendaAcumulada.innerText = "R$ " + parseFloat(rendaSalva).toFixed(2);
+        valorRecebimento.innerText = "R$ " + parseFloat(recebimentoSalvo).toFixed(2);  // Exibe o valor retirado
+
+        // Recupera o nome e telefone do usuário no localStorage
+        let nomeUsuario = localStorage.getItem("nomeUsuario") || "Nome não cadastrado";
+        let telefoneUsuario = localStorage.getItem("telefoneLogado") || "Telefone não cadastrado";
+
+        // Exibe os dados do usuário na tela
+        document.getElementById("usuario-nome").textContent = "Nome do Usuário: " + nomeUsuario;
+        document.getElementById("usuario-telefone").textContent = "Telefone: " + telefoneUsuario;
+
+        // Função para o check-in diário
+        checkinDiario.addEventListener("click", function () {
+            let hoje = new Date().toLocaleDateString();
+
+            // Verifica se já fez check-in hoje
+            if (localStorage.getItem("ultimoCheckin") === hoje) {
+                alert("Você já fez o check-in hoje! Tente novamente amanhã.");
+                return;
+            }
+
+            // Atualiza os valores da conta
+            let novoSaldo = parseFloat(saldoSalvo) + 1;
+            let novaRenda = parseFloat(rendaSalva) + 1;
+            localStorage.setItem("saldoConta", novoSaldo);
+            localStorage.setItem("rendaAcumulada", novaRenda);
+
+            // Atualiza a tela
+            saldoConta.innerText = "R$ " + novoSaldo.toFixed(2);
+            rendaAcumulada.innerText = "R$ " + novaRenda.toFixed(2);
+
+            // Marca o check-in do dia
+            localStorage.setItem("ultimoCheckin", hoje);
+
+            alert("Check-in diário realizado com sucesso! Você ganhou R$1.");
+        });
+    });
+</script>
+
+</body>
+</html>

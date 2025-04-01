@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minha Equipe - Ganhos</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .profile span {
+      font-size: 18px;
+    }
+
+    .details-btn {
+      background-color: #8A2BE2;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .details-btn:hover {
+      background-color: #6a0dad;
+    }
+
+    .team-section {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .team-level {
+      background-color: #1e1e1e;
+      margin: 10px 0;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .level {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .tax, .bonus, .status {
+      font-size: 14px;
+    }
+
+    .invite-section {
+      margin-bottom: 20px;
+    }
+
+    .invite-code, .invite-link {
+      background-color: #1e1e1e;
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+
+    .copy-btn {
+      background-color: #8A2BE2;
+      color: white;
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .copy-btn:hover {
+      background-color: #6a0dad;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .bonus-info {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header">
+        <div class="profile">
+          <span>Minha equipe</span>
+        </div>
+        <button class="details-btn" onclick="window.location.href='equipe.html'">Detalhes da equipe</button>
+      </div>
+    </header>
+
+    <section class="team-section">
+      <div class="team-level">
+        <div class="level">LV1</div>
+        <div class="tax">35% Taxa de comissão</div>
+        <div class="bonus">R$ 0,00 Bônus</div>
+        <div class="status">Usuário válido</div>
+      </div>
+
+      <div class="team-level">
+        <div class="level">LV2</div>
+        <div class="tax">2% Taxa de comissão</div>
+        <div class="bonus">R$ 0,00 Bônus</div>
+        <div class="status">Usuário válido</div>
+      </div>
+
+      <div class="team-level">
+        <div class="level">LV3</div>
+        <div class="tax">1% Taxa de comissão</div>
+        <div class="bonus">R$ 0,00 Bônus</div>
+        <div class="status">Usuário válido</div>
+      </div>
+    </section>
+
+    <section class="invite-section">
+      <div class="invite-code">
+        <span>Código de convite</span>
+        <p id="invite-code">15d2f8b8</p>
+        <button class="copy-btn" onclick="copyText('invite-code')">Cópia</button>
+      </div>
+
+      <div class="invite-link">
+        <span>Link de convite</span>
+        <p id="invite-link">https://inves13.github.io/Hinvest-/?...</p>
+        <button class="copy-btn" onclick="copyText('invite-link')">Cópia</button>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer">
+        <span>0 Dados da minha equipe</span>
+        <span>R$ 0,00 Número de pessoas</span>
+      </div>
+      <div class="bonus-info">
+        <span>Bônus de convite</span>
+        <p>Quando um amigo que você convidar se registrar e investir, você receberá imediatamente uma recompensa de 35% do valor de investimento de amigo.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Função para copiar o texto
+    function copyText(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Texto copiado para a área de transferência');
+      });
+    }
+  </script>
+</body>
+</html>

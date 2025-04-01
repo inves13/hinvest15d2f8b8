@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carteira Digital</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Aqui você pode colocar qualquer CSS adicional para o estilo do conteúdo */
+        .hidden {
+            display: none;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .saldo-box {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .saldo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .account-details {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+        }
+
+        .account-details p {
+            margin: 5px 0;
+        }
+
+        .retirada-box {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e6e6e6;
+            border-radius: 5px;
+        }
+
+        .botao {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .botao:disabled {
+            background-color: #ccc;
+        }
+
+        .status-retirada {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .status-em-analise {
+            color: orange;
+        }
+
+        .status-aprovado {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button onclick="window.location.href='extrato.html'">Extrato de Retirada</button>
+    <h2>Carteira Digital</h2>
+
+    <!-- Exibição do Saldo -->
+    <div class="saldo-box">
+        <p class="saldo">R$ <span id="saldo">20.00</span></p>
+        <p>Meu Saldo</p>
+    </div>
+
+    <!-- Seleção de Conta PIX -->
+    <h3>Selecione a Conta PIX para Saque</h3>
+    <div id="conta-pix-selecionada" class="account-details hidden">
+        <p><strong>Conta PIX Selecionada:</strong></p>
+        <p id="conta-titular"></p>
+        <p id="conta-chave"></p>
+    </div>
+
+    <button id="adicionar-conta" class="botao">Adicionar Conta PIX</button>
+
+    <!-- Formulário para Adicionar Conta PIX -->
+    <div id="form-conta" class="hidden">
+        <h3>Adicionar Conta Bancária</h3>
+        <label for="nome-titular">Nome do Titular:</label>
+        <input type="text" id="nome-titular" placeholder="Nome do Titular" required><br><br>
+
+        <label for="tipo-chave">Tipo de Chave:</label>
+        <select id="tipo-chave" required>
+            <option value="telefone">Telefone</option>
+            <option value="cpf">CPF</option>
+            <option value="email">E-mail</option>
+        </select><br><br>
+
+        <label for="chave">Chave PIX:</label>
+        <input type="text" id="chave" placeholder="Chave PIX" required><br><br>
+
+        <button id="salvar-conta" class="botao">Salvar Conta</button>
+    </div>
+
+    <!-- Campo para o Valor de Retirada -->
+    <h3>Valor de Retirada</h3>
+    <input type="number" id="valor-saque" placeholder="R$">
+    <p>Valor recebido: R$ <span id="valor-recebido">0.00</span></p>
+    <p>Taxa de Saque: 12%</p>
+
+    <button id="retirar" class="botao">Retirar Agora</button>
+
+    <!-- Instruções -->
+    <h3>Instruções</h3>
+    <ul class="instrucoes">
+        <li>O valor mínimo de saque é de R$ 20.</li>
+        <li>A taxa de saque é de 12%.</li>
+        <li>As retiradas chegam em 4 a 24 horas.</li>
+    </ul>
+
+    <!-- Exibição do Status da Retirada -->
+    <div class="retirada-box">
+        <p><strong>Valor de Retirada: </strong> R$ <span id="valor-retirada">0.00</span></p>
+        <p class="status-retirada status-em-analise" id="status-retirada">Status: Em Análise</p>
+    </div>
+</div>
+
+<script>
+    let saldo = parseFloat(localStorage.getItem("saldoConta")) || 20.00; // Saldo da conta
+    let extrato = JSON.parse(localStorage.getItem("extrato")) || [];
+
+    // Exibe o saldo na página
+    document.getElementById("saldo").textContent = saldo.toFixed(2);
+
+    // Função para carregar a conta PIX salva
+    function carregarContaPix() {
+        let contasPix = JSON.parse(localStorage.getItem("contasPix")) || [];
+        if (contasPix.length > 0) {
+            let conta = contasPix[contasPix.length - 1]; // Última conta adicionada
+            document.getElementById("conta-titular").textContent = "Titular: " + conta.nomeTitular;
+            document.getElementById("conta-chave").textContent = conta.tipoChave.charAt(0).toUpperCase() + conta.tipoChave.slice(1) + ": " + conta.chave;
+            document.getElementById("conta-pix-selecionada").classList.remove("hidden");
+            document.getElementById("adicionar-conta").disabled = true;
+        }
+    }
+
+    // Carregar conta PIX ao carregar a página
+    carregarContaPix();
+
+    // Exibir o formulário para adicionar a conta PIX
+    document.getElementById("adicionar-conta").addEventListener("click", function() {
+        document.getElementById("form-conta").classList.remove("hidden");
+    });
+
+    // Salvar a conta PIX no localStorage
+    document.getElementById("salvar-conta").addEventListener("click", function() {
+        let nomeTitular = document.getElementById("nome-titular").value;
+        let tipoChave = document.getElementById("tipo-chave").value;
+        let chave = document.getElementById("chave").value;
+
+        if (!nomeTitular || !tipoChave || !chave) {
+            alert("Por favor, preencha todos os campos.");
+            return;
+        }
+
+        let contasPix = JSON.parse(localStorage.getItem("contasPix")) || [];
+        contasPix.push({
+            nomeTitular: nomeTitular,
+            tipoChave: tipoChave,
+            chave: chave
+        });
+
+        localStorage.setItem("contasPix", JSON.stringify(contasPix));
+
+        // Atualiza a tela com a conta PIX adicionada
+        document.getElementById("conta-titular").textContent = "Titular: " + nomeTitular;
+        document.getElementById("conta-chave").textContent = tipoChave.charAt(0).toUpperCase() + tipoChave.slice(1) + ": " + chave;
+
+        document.getElementById("form-conta").classList.add("hidden");
+        document.getElementById("conta-pix-selecionada").classList.remove("hidden");
+
+        document.getElementById("adicionar-conta").disabled = true;
+    });
+
+    // Atualiza automaticamente o valor que o usuário receberá após a taxa
+    document.getElementById("valor-saque").addEventListener("input", function() {
+        let valorSaque = parseFloat(document.getElementById("valor-saque").value);
+        if (!isNaN(valorSaque)) {
+            let taxa = 0.12; // 12% de taxa
+            let valorFinal = valorSaque - (valorSaque * taxa); // Calcula o valor recebido
+            document.getElementById("valor-recebido").textContent = valorFinal.toFixed(2); // Exibe o valor a ser recebido
+        }
+    });
+
+    // Atualiza a tela de saque
+    document.getElementById("retirar").addEventListener("click", function() {
+        let valorSaque = parseFloat(document.getElementById("valor-saque").value);
+        if (isNaN(valorSaque) || valorSaque < 20) {
+            alert("O valor mínimo de saque é R$20,00.");
+            return;
+        }
+
+        if (saldo < valorSaque) {
+            alert("Saldo insuficiente.");
+            return;
+        }
+
+        // Aplica a taxa de 12% no saque
+        let taxa = 0.12;
+        let valorFinal = valorSaque - (valorSaque * taxa);
+        saldo -= valorSaque;
+        document.getElementById("saldo").textContent = saldo.toFixed(2);
+
+        // Registra o saque no extrato
+        extrato.push({
+            valor: valorSaque,
+            data: new Date().toLocaleString()
+        });
+        localStorage.setItem("extrato", JSON.stringify(extrato));
+
+        // Atualiza o saldo no localStorage
+        localStorage.setItem("saldoConta", saldo.toFixed(2));
+
+        // Transfere o valor retirado para o h.html
+        localStorage.setItem("valorRecebimento", valorFinal.toFixed(2)); // Armazenar no localStorage
+
+        // Exibe mensagem de sucesso
+        alert("Saque de R$" + valorSaque.toFixed(2) + " realizado com sucesso! Você recebeu R$" + valorFinal.toFixed(2) + " após a taxa.");
+
+        // Atualiza o status da retirada
+        document.getElementById("status-retirada").classList.remove("status-em-analise");
+        document.getElementById("status-retirada").classList.add("status-aprovado");
+        document.getElementById("status-retirada").textContent = "Status: Aprovado";
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,239 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #000; /* Fundo preto */
+    color: #fff; /* Texto branco */
+}
+
+/* Banner */
+.banner {
+    background: linear-gradient(135deg, #111, #222);
+    color: #ffcc00;
+    text-align: center;
+    padding: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* Menu de ações na horizontal */
+.acoes {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 10px;
+    background: #111;
+    border-radius: 10px;
+    margin: 10px;
+}
+
+.acoes .botao {
+    display: flex;
+    align-items: center;
+    background: #222;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 12px;
+    text-align: center;
+    justify-content: center;
+    transition: 0.3s;
+    flex: 1;
+    margin: 5px;
+    min-width: 100px;
+}
+
+.acoes .botao:hover {
+    background: #333;
+}
+
+.acoes .botao img {
+    width: 18px;
+    margin-right: 5px;
+}
+
+/* Notificação agora com valores passando */
+.notificacao {
+    width: 100%;
+    background: #e6b800;
+    padding: 10px;
+    font-weight: bold;
+    color: #000;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.notificacao .icone-sino {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.notificacao marquee {
+    font-weight: bold;
+    color: #000;
+}
+
+/* Carteira */
+.carteira {
+    background: #111;
+    padding: 20px;
+    margin: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.carteira h2 {
+    color: #ffcc00;
+    margin-bottom: 10px;
+}
+
+.saldos {
+    display: flex;
+    justify-content: space-between;
+}
+
+.saldo {
+    background: #222;
+    padding: 15px;
+    border-radius: 10px;
+    width: 30%;
+    text-align: center;
+}
+
+.saldo img {
+    width: 40px;
+}
+
+.saldo p {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.saldo span {
+    font-size: 0.9em;
+    color: #bbb;
+}
+
+/* Adicionando a exibição do número do telefone e saldo */
+.dados-usuario {
+    background: #222;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.dados-usuario p {
+    font-size: 1.2em;
+    color: #ffcc00;
+    margin: 10px 0;
+}
+
+/* Estilo para o formulário de recarga */
+.recarga {
+    background: #222;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+#valor-recarga {
+    padding: 10px;
+    font-size: 16px;
+    width: 150px;
+    margin-right: 10px;
+    background-color: #333;
+    border: 1px solid #555;
+    color: white;
+}
+
+#botao-recarga {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#botao-recarga:hover {
+    background-color: #218838;
+}
+
+/* Menu inferior */
+.menu-inferior {
+    display: flex;  /* Isso faz com que os itens fiquem em linha */
+    justify-content: space-around; /* Espaçamento uniforme entre os itens */
+    background: #111;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+/* Estilo para os links do menu inferior */
+.menu-inferior a {
+    color: white;
+    text-align: center;
+    font-size: 14px;
+    padding: 10px;
+    text-decoration: none;
+    flex: 1;  /* Garante que todos os itens ocupem a mesma quantidade de espaço */
+    display: flex;
+    flex-direction: column; /* Para que a imagem e o texto fiquem organizados em coluna */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilo para as imagens no menu inferior */
+.menu-inferior a img {
+    width: 20px;
+    display: block;
+    margin-bottom: 5px; /* Para espaçar a imagem do texto */
+}
+
+/* Estilo para o link ativo (quando estiver selecionado) */
+.menu-inferior a.ativo {
+    font-weight: bold;
+    border-bottom: 2px solid white;
+}
+
+/* Manter o layout organizado */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+}
+
+.main-content {
+    width: 100%;
+    max-width: 1200px;
+}
+
+.acoes {
+    flex-wrap: wrap; /* Para que os botões não fiquem todos juntos */
+}
+
+/* Ajustando o menu inferior para ser fixo e visível */
+.menu-inferior {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #111;
+    z-index: 1000;
+}
+
+/* Ajustes de visibilidade e layout */
+.carteira, .dados-usuario, .recarga {
+    margin: 20px 0;
+}

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hivest - Plataforma</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: white;
+        }
+        .container {
+            padding: 20px;
+        }
+        .perfil {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .perfil img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+        }
+        .perfil-info {
+            flex-grow: 1;
+            margin-left: 10px;
+        }
+        .logout {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .saldo {
+            background-color: blueviolet;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .saldo button {
+            background-color: white;
+            color: black;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .acoes {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .acoes div {
+            text-align: center;
+            cursor: pointer;
+        }
+        .acoes img {
+            width: 40px;
+        }
+        .servicos {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            text-align: center;
+        }
+        .servicos div {
+            background-color: #333;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .menu {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #111;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+        .menu div {
+            text-align: center;
+            cursor: pointer;
+        }
+        .menu img {
+            width: 30px;
+        }
+        .selecionado {
+            color: blueviolet;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Perfil -->
+    <div class="perfil">
+        <img src="10017.png"alt="Logo Hivest">
+        <div class="perfil-info">
+            <h3>Hivest</h3>
+            <p id="telefone">Telefone: Não disponível</p> <!-- Aqui é onde o telefone vai aparecer -->
+        </div>
+        <div class="logout" onclick="logout()">🔓</div>
+    </div>
+
+    <!-- Saldo -->
+    <div class="saldo">
+        <h2 id="saldo">R$ 22.00</h2>
+        <p>Saldo da conta</p>
+        <button onclick="irPara('recarga.html')">Recarga ></button>
+    </div>
+
+    <!-- Serviços -->
+    <h3>Meus serviços</h3>
+    <div class="servicos">
+        <div onclick="irPara('sobre.html')">ℹ️ <br> Sobre nós</div>
+        <div onclick="irPara('regras.html')">📜 <br> Regras da plataforma</div>
+        <div onclick="irPara('registros_conta.html')">📄 <br> Registros de conta</div>
+        <div onclick="irPara('ajuda.html')">🎧 <br> Ajuda</div>
+        <div onclick="irPara('download.html')">⬇️ <br> Download</div>
+        <div onclick="irPara('saque.html')">💳 <br> Conta PIX</div>
+        <div onclick="irPara('senha.html')">🔒 <br> Senha</div>
+        <div onclick="irPara('presente.htm')">🎁 <br> Resgatar presentes</div>
+    </div>
+</div>
+
+<script>
+    // Função para redirecionar para outra página
+    function irPara(pagina) {
+        window.location.href = pagina;
+    }
+
+    // Carregar telefone do usuário após login
+    function carregarUsuario() {
+        let telefone = localStorage.getItem("telefoneLogado"); // Obtém o telefone do localStorage
+        if (telefone) {
+            document.getElementById("telefone").textContent = "Telefone: " + telefone; // Exibe o telefone
+        } else {
+            document.getElementById("telefone").textContent = "Usuário não logado";
+        }
+    }
+
+    // Carregar saldo da conta (R$22.00) do localStorage
+    function carregarSaldo() {
+        let saldo = localStorage.getItem("saldoConta");
+        if (!saldo) {
+            localStorage.setItem("saldoConta", "22.00"); // Definindo saldo inicial
+            saldo = "22.00"; // Valor inicial
+        }
+        document.getElementById("saldo").textContent = "R$ " + parseFloat(saldo).toFixed(2);
+    }
+
+    // Função de logout (remove o ID do LocalStorage)
+    function logout() {
+        alert("Você foi deslogado!");
+        localStorage.removeItem("telefoneLogado"); // Remove o telefone logado
+    }
+
+    // Carregar os dados quando a página abrir
+    carregarUsuario();
+    carregarSaldo();
+</script>
+
+</body>
+</html>

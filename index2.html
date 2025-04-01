@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Administração - Hivest</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: white;
+        }
+        .container {
+            padding: 20px;
+        }
+        .usuarios {
+            margin-bottom: 20px;
+        }
+        .usuarios table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .usuarios th, .usuarios td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #333;
+        }
+        .usuarios th {
+            background-color: #444;
+        }
+        .btn-adicionar {
+            padding: 10px 15px;
+            background-color: blueviolet;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-adicionar:hover {
+            background-color: purple;
+        }
+        .formulario {
+            margin-top: 20px;
+            background-color: #222;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .formulario input, .formulario button {
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+        }
+        .formulario button {
+            background-color: blueviolet;
+            cursor: pointer;
+        }
+        .formulario button:hover {
+            background-color: purple;
+        }
+        .saque {
+            margin-top: 20px;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .saque h3 {
+            margin-bottom: 10px;
+        }
+        .saque p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Painel de Administração</h1>
+
+    <!-- Lista de usuários -->
+    <div class="usuarios">
+        <h3>Usuários Cadastrados</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                    <th>Saldo</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-usuarios">
+                <!-- Aqui será preenchido com os usuários -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Formulário para adicionar saldo -->
+    <div class="formulario">
+        <h3>Adicionar Saldo ao Usuário</h3>
+        <input type="text" id="nomeUsuario" placeholder="Nome do Usuário" />
+        <input type="text" id="telefoneUsuario" placeholder="Telefone do Usuário" />
+        <input type="number" id="valorRecarga" placeholder="Valor da Recarga" />
+        <button onclick="adicionarSaldo()">Adicionar Saldo</button>
+    </div>
+
+    <!-- Seção de Saque -->
+    <div class="saque">
+        <h3>Saque Solicitado</h3>
+        <div id="informacao-saque">
+            <p id="saque-valor">Valor do Saque: R$ 0.00</p>
+            <p id="saque-chave">Chave do Saque: Nenhuma</p>
+            <button id="aprovar-saque" class="btn-adicionar" style="display: none;" onclick="aprovarSaque()">Aprovar Saque</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Função para carregar os usuários do localStorage
+    function carregarUsuarios() {
+        const usuarios = JSON.parse(localStorage.getItem("usuarios")) || {};
+        const tabelaUsuarios = document.getElementById('tabela-usuarios');
+        tabelaUsuarios.innerHTML = ''; // Limpar a tabela antes de adicionar novos dados
+
+        for (const telefone in usuarios) {
+            const usuario = usuarios[telefone];
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${usuario.nome}</td>
+                <td>${telefone}</td>
+                <td>R$ ${usuario.saldo ? usuario.saldo.toFixed(2) : 0}</td>
+                <td><button onclick="mostrarFormulario('${telefone}')">Adicionar Saldo</button></td>
+            `;
+            tabelaUsuarios.appendChild(tr);
+        }
+
+        // Verifica se existe um saque pendente e exibe as informações
+        const saqueValor = localStorage.getItem("saqueValor");
+        const saqueChave = localStorage.getItem("saqueChave");
+        if (saqueValor && saqueChave) {
+            document.getElementById("saque-valor").textContent = `Valor do Saque: R$ ${parseFloat(saqueValor).toFixed(2)}`;
+            document.getElementById("saque-chave").textContent = `Chave do Saque: ${saqueChave}`;
+            document.getElementById("aprovar-saque").style.display = "inline-block"; // Exibe o botão para aprovar o saque
+        }
+    }
+
+    // Função para preencher os campos do formulário com os dados do usuário
+    function mostrarFormulario(telefone) {
+        const usuarios = JSON.parse(localStorage.getItem("usuarios")) || {};
+        const usuario = usuarios[telefone];
+        if (usuario) {
+            document.getElementById('nomeUsuario').value = usuario.nome;
+            document.getElementById('telefoneUsuario').value = telefone;
+            document.getElementById('valorRecarga').value = '';
+        }
+    }
+
+    // Função para adicionar saldo e transferir para o h.html
+    function adicionarSaldo() {
+        const nomeUsuario = document.getElementById('nomeUsuario').value;
+        const telefoneUsuario = document.getElementById('telefoneUsuario').value;
+        const valorRecarga = parseFloat(document.getElementById('valorRecarga').value);
+
+        if (!nomeUsuario || !telefoneUsuario || isNaN(valorRecarga) || valorRecarga <= 0) {
+            alert('Por favor, preencha todos os campos corretamente!');
+            return;
+        }
+
+        // Atualiza o saldo do usuário no localStorage
+        const usuarios = JSON.parse(localStorage.getItem("usuarios")) || {};
+        const usuario = usuarios[telefoneUsuario];
+        if (usuario) {
+            usuario.saldo = (usuario.saldo || 0) + valorRecarga;
+            localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+            // Transfere o valor de recarga para o h.html (Carteira)
+            localStorage.setItem("saldoConta", (usuario.saldo).toFixed(2));
+
+            alert(`Saldo de R$ ${valorRecarga.toFixed(2)} adicionado ao usuário ${nomeUsuario}`);
+            carregarUsuarios(); // Recarregar a lista de usuários
+        } else {
+            alert('Usuário não encontrado!');
+        }
+    }
+
+    // Função para aprovar o saque
+    function aprovarSaque() {
+        alert("Saque aprovado com sucesso!");
+
+        // Limpa as informações de saque no localStorage
+        localStorage.removeItem("saqueValor");
+        localStorage.removeItem("saqueChave");
+
+        // Atualiza a interface
+        carregarUsuarios();
+    }
+
+    // Carregar a lista de usuários ao abrir a página
+    carregarUsuarios();
+</script>
+
+</body>
+</html>

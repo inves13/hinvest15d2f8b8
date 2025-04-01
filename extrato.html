@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extrato de Retirada</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h2>Extrato de Retirada</h2>
+        <div id="extrato-lista">
+            <!-- Lista de extratos será exibida aqui -->
+        </div>
+    </div>
+
+    <script>
+        // Recupera o extrato do localStorage
+        let extrato = JSON.parse(localStorage.getItem("extrato")) || [];
+
+        // Função para exibir o extrato na página
+        function exibirExtrato() {
+            let listaExtrato = document.getElementById("extrato-lista");
+
+            // Limpa a lista antes de exibir os extratos
+            listaExtrato.innerHTML = "";
+
+            // Verifica se o extrato possui registros
+            if (extrato.length === 0) {
+                listaExtrato.innerHTML = "<p>Você ainda não fez nenhum saque.</p>";
+                return;
+            }
+
+            // Itera pelos extratos e exibe no HTML
+            extrato.forEach((item) => {
+                let divExtrato = document.createElement("div");
+                divExtrato.classList.add("extrato-item");
+
+                divExtrato.innerHTML = `
+                    <p><strong>Valor:</strong> R$ ${item.valor.toFixed(2)}</p>
+                    <p><strong>Data:</strong> ${item.data}</p>
+                    <p><strong>Status:</strong> <span class="${item.status === 'Aprovado' ? 'status-aprovado' : 'status-analise'}">${item.status}</span></p>
+                `;
+                
+                listaExtrato.appendChild(divExtrato);
+            });
+        }
+
+        // Chama a função para exibir o extrato
+        exibirExtrato();
+    </script>
+
+    <style>
+        .status-aprovado {
+            color: green;
+        }
+
+        .status-analise {
+            color: orange;
+        }
+
+        .extrato-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</body>
+</html>
